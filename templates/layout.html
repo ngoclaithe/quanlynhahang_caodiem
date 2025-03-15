@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Restaurant Manager{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_order.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ingredient.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statistical.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_user.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% if not session.user_id %}
+      <script>window.location = "{{ url_for('auth.login_page') }}";</script>
+    {% endif %}
+    
+    <header class="top-header">
+        <h1>Restaurant Manager</h1>
+    </header>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    {% if session.role == 'admin' %}
+                      <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+                      <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('menu.list_menu') }}">Thực đơn</a></li>
+                      <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>
+                      <li><a href="{{ url_for('warehouse.list_ingredients') }}">Kho</a></li>
+                      <li><a href="{{ url_for('attendance.list_attendance') }}">Chấm công</a></li>
+                      <li><a href="{{ url_for('statistical.statistical_index') }}">Thống kê</a></li>
+                      <li><a href="{{ url_for('manage_user.list_users') }}">Quản lý người dùng</a></li>
+                    {% elif session.role == 'manager' %}
+                      <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('menu.list_menu') }}">Thực đơn</a></li>
+                      <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>
+                      <li><a href="{{ url_for('warehouse.list_ingredients') }}">Kho</a></li>
+                      <li><a href="{{ url_for('attendance.list_attendance') }}">Chấm công</a></li>
+                      <li><a href="{{ url_for('statistical.statistical_index') }}">Thống kê</a></li>
+                    {% elif session.role == 'waiter' %}
+                      <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('attendance.list_attendance') }}">Chấm công</a></li>
+                    {% elif session.role == 'warehouse' %}
+                      <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>
+                      <li><a href="{{ url_for('warehouse.list_ingredients') }}">Kho</a></li>
+                      <li><a href="{{ url_for('attendance.list_attendance') }}">Chấm công</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('main.home') }}">Trang chủ</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Đăng xuất</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="flashes">
+                  {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <footer class="footer">
+        <p>&copy; 2025 Restaurant Manager. All Rights Reserved.</p>
+    </footer>
+</body>
+<script src="{{ url_for('static', filename='js/order-create.js') }}"></script>
+</html>

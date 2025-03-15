@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+  {{ super() }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .dashboard-header h2 {
+      margin: 0;
+      font-size: 32px;
+      color: #333;
+    }
+    .user-info {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #555;
+    }
+    .stats-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex: 1 1 300px;
+      text-align: center;
+    }
+    .stat-card h3 {
+      margin: 0;
+      font-size: 24px;
+      color: #3498db;
+    }
+    .stat-card p {
+      font-size: 20px;
+      margin: 10px 0 0;
+      color: #333;
+    }
+    .chart-container {
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+
+<div class="stats-container">
+  <div class="stat-card">
+    <h3>Đơn hàng</h3>
+    <p>150</p>
+  </div>
+  <div class="stat-card">
+    <h3>Thực đơn</h3>
+    <p>45</p>
+  </div>
+  <div class="stat-card">
+    <h3>Nguyên liệu</h3>
+    <p>320</p>
+  </div>
+  <div class="stat-card">
+    <h3>Kho</h3>
+    <p>28</p>
+  </div>
+  <div class="stat-card">
+    <h3>Chấm công</h3>
+    <p>95</p>
+  </div>
+</div>
+
+<div class="chart-container">
+  <canvas id="chart1"></canvas>
+</div>
+<div class="chart-container">
+  <canvas id="chart2"></canvas>
+</div>
+
+<script>
+  const ctx1 = document.getElementById('chart1').getContext('2d');
+  const chart1 = new Chart(ctx1, {
+      type: 'pie',
+      data: {
+          labels: ['Đơn hàng', 'Thực đơn', 'Nguyên liệu', 'Kho', 'Chấm công'],
+          datasets: [{
+              label: 'Tỷ lệ',
+              data: [150, 45, 320, 28, 95],
+              backgroundColor: [
+                  '#3498db',
+                  '#2ecc71',
+                  '#f1c40f',
+                  '#e74c3c',
+                  '#9b59b6'
+              ]
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: 'bottom'
+              },
+              title: {
+                  display: true,
+                  text: 'Tỷ lệ sử dụng chức năng'
+              }
+          }
+      }
+  });
+
+  const ctx2 = document.getElementById('chart2').getContext('2d');
+  const chart2 = new Chart(ctx2, {
+      type: 'line',
+      data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [{
+              label: 'Doanh thu (VNĐ)',
+              data: [12000000, 15000000, 18000000, 16000000, 20000000, 22000000, 21000000, 23000000, 19000000, 25000000, 24000000, 26000000],
+              fill: false,
+              borderColor: '#3498db',
+              tension: 0.1
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: 'bottom'
+              },
+              title: {
+                  display: true,
+                  text: 'Doanh thu theo tháng'
+              }
+          }
+      }
+  });
+</script>
+{% endblock %}
