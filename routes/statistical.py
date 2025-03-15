@@ -8,18 +8,12 @@ statistical_bp = Blueprint('statistical', __name__, url_prefix='/statistical')
 
 @statistical_bp.route('/')
 def statistical_index():
-    """
-    Trang thống kê tổng hợp cho phép người dùng chọn xem thống kê giao dịch kho theo ngày
-    hoặc tiền lương nhân công theo tháng, đồng thời nhập mức lương theo role.
-    """
+
     return render_template('statistical.html')
 
 @statistical_bp.route('/warehouse/daily', methods=['GET'])
 def warehouse_daily():
-    """
-    Trang thống kê giao dịch kho theo ngày.
-    Yêu cầu query parameter 'date' theo định dạng 'YYYY-MM-DD'.
-    """
+
     selected_date = request.args.get('date')
     stats = None
     if selected_date:
@@ -28,10 +22,7 @@ def warehouse_daily():
 
 @statistical_bp.route('/warehouse/daily/pdf', methods=['GET'])
 def warehouse_daily_pdf():
-    """
-    Xuất thống kê giao dịch kho theo ngày ra file PDF sử dụng WeasyPrint.
-    Yêu cầu query parameter 'date' theo định dạng 'YYYY-MM-DD'.
-    """
+
     selected_date = request.args.get('date')
     if not selected_date:
         flash('Bạn phải chọn ngày để xuất PDF', 'error')

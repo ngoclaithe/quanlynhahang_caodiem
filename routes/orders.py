@@ -26,7 +26,7 @@ def create_order():
             order_time=datetime.utcnow()
         )
         db.session.add(order)
-        db.session.flush() 
+        db.session.flush()  
         
         item_ids = request.form.getlist('item_ids[]')
         quantities = request.form.getlist('quantities[]')
@@ -56,3 +56,17 @@ def create_order():
 def view_order(order_id):
     order = Order.query.get_or_404(order_id)
     return render_template('order_detail.html', order=order)
+
+@orders_bp.route('/update_status/<int:order_id>', methods=['GET', 'POST'])
+def update_order_status(order_id):
+    order = Order.query.get_or_404(order_id)
+    if request.method == 'POST':
+        new_status = request.form.get('status')
+        if new_status not in ['pending', 'in_progress', 'completed', 'cancelled']:
+            flash('Trạng thái không hợp lệ', 'error')
+            return redirect(url_for('orders.update_order_status', order_id=order_id))
+        order.status = new_status
+        db.session.commit()
+        flash('Trạng thái đơn hàng đã được cập nhật', 'success')
+        return redirect(url_for('orders.view_order', order_id=order.id))
+    return render_template('update_order_status.html', order=order)

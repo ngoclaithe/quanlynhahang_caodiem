@@ -5,7 +5,7 @@ class Order(db.Model):
     __tablename__ = 'orders'
     
     id = db.Column(db.Integer, primary_key=True)
-    order_time = db.Column(db.DateTime, default=datetime.utcnow)
+    order_time = db.Column(db.DateTime, default=datetime.now)
     waiter_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     status = db.Column(db.String(50), nullable=False)  # pending, in_progress, completed, canceled
     total_amount = db.Column(db.Float, default=0.0)

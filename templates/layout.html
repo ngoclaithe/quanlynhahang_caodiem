@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ingredient.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/statistical.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/payment.css') }}">
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -30,6 +31,7 @@
                     {% if session.role == 'admin' %}
                       <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
                       <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('payment.list_payments') }}">Thanh toán</a></li>
                       <li><a href="{{ url_for('menu.list_menu') }}">Thực đơn</a></li>
                       <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>
                       <li><a href="{{ url_for('warehouse.list_ingredients') }}">Kho</a></li>
@@ -38,6 +40,7 @@
                       <li><a href="{{ url_for('manage_user.list_users') }}">Quản lý người dùng</a></li>
                     {% elif session.role == 'manager' %}
                       <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('payment.list_payments') }}">Thanh toán</a></li>
                       <li><a href="{{ url_for('menu.list_menu') }}">Thực đơn</a></li>
                       <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>
                       <li><a href="{{ url_for('warehouse.list_ingredients') }}">Kho</a></li>
@@ -45,6 +48,7 @@
                       <li><a href="{{ url_for('statistical.statistical_index') }}">Thống kê</a></li>
                     {% elif session.role == 'waiter' %}
                       <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('payment.list_payments') }}">Thanh toán</a></li>
                       <li><a href="{{ url_for('attendance.list_attendance') }}">Chấm công</a></li>
                     {% elif session.role == 'warehouse' %}
                       <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>

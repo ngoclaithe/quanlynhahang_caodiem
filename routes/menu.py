@@ -57,7 +57,6 @@ def create_menu_item():
             upload_dir = os.path.join(current_app.root_path, 'static', 'images', 'menu')
             os.makedirs(upload_dir, exist_ok=True)
             
-            # Tạo đường dẫn file sử dụng os.path.join và chuyển thành forward slash
             image_path = os.path.join('images', 'menu', filename).replace('\\', '/')
             upload_path = os.path.join(current_app.root_path, 'static', image_path)
             image_file.save(upload_path)

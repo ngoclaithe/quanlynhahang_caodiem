@@ -48,6 +48,11 @@
     <p style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">Không có món ăn nào được thêm vào.</p>
     {% endif %}
     
-    <a href="{{ url_for('orders.list_orders') }}" class="btn btn-back" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #fff; border-radius: 4px; text-decoration: none; transition: background-color 0.3s;">Quay lại danh sách đơn hàng</a>
+    <div style="display: flex; gap: 10px;">
+        <a href="{{ url_for('orders.list_orders') }}" class="btn btn-back" style="padding: 10px 20px; background-color: #3498db; color: #fff; border-radius: 4px; text-decoration: none; transition: background-color 0.3s;">Quay lại danh sách đơn hàng</a>
+        <a href="{{ url_for('orders.update_order_status', order_id=order.id) }}" class="btn btn-update" style="padding: 10px 20px; background-color: #f39c12; color: #fff; border-radius: 4px; text-decoration: none; transition: background-color 0.3s;">Cập nhật đơn hàng</a>
+        <a href="{{ url_for('payment.create_payment', order_id=order.id) }}" class="btn btn-payment" style="padding: 10px 20px; background-color: #2ecc71; color: #fff; border-radius: 4px; text-decoration: none; transition: background-color 0.3s;">Thanh toán</a>
+    </div>
+    
 </div>
 {% endblock %}

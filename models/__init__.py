@@ -12,6 +12,6 @@ def init_db(app):
         from models.ingredient import Ingredient
         from models.warehouse_transaction import WarehouseTransaction
         from models.attendance import Attendance
-        
+        from models.payment import Payment
         db.create_all()
         print("Database tables created successfully!")
