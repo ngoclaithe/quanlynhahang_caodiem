@@ -1,0 +1,400 @@
+{% extends "layout.html" %}
+{% block title %}Chi tiết đơn hàng - Bàn {{ table_number }}{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+        --color-primary: #4361ee;
+        --color-success: #2ecc71;
+        --color-warning: #f39c12;
+        --color-danger: #e74c3c;
+        --color-info: #3498db;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+        --transition: all 0.3s ease;
+    }
+    
+    /* Container chính */
+    .page-container {
+        background-color: #f8f9fa;
+        border-radius: var(--radius);
+        padding: 30px;
+        box-shadow: var(--shadow);
+        margin: 30px auto;
+        max-width: 1200px;
+    }
+    
+    /* Phần header */
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 25px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        padding-bottom: 15px;
+    }
+    
+    .page-title {
+        margin: 0;
+        color: #333;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+    
+    .back-btn {
+        padding: 8px 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 8px;
+        transition: var(--transition);
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        align-self: flex-start;
+    }
+    
+    /* Phần thông tin đơn hàng */
+    .order-summary {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: var(--radius);
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+        border-left: 5px solid var(--color-primary);
+    }
+    
+    .summary-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .summary-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .summary-item {
+        flex: 1;
+        min-width: 200px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .summary-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .summary-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .timer {
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background-color: #f0f0f0;
+    }
+    
+    .timer-urgent {
+        color: white;
+        background-color: var(--color-danger);
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+    
+    /* Danh sách món - Phần chính cần cải thiện */
+    .items-container {
+        background-color: white;
+        border-radius: var(--radius);
+        padding: 25px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+    }
+    
+    /* Thiết kế card món ăn */
+    .item-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 15px;
+        border: none;
+        overflow: hidden;
+        transition: var(--transition);
+    }
+    
+    .item-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    .item-served {
+        border-left: 5px solid var(--color-success);
+    }
+    
+    .item-pending {
+        border-left: 5px solid var(--color-warning);
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    .card-body .row {
+        align-items: center;
+    }
+    
+    .item-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    
+    .item-quantity {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 10px;
+    }
+    
+    .item-note {
+        background-color: #f8f8f8;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .served-time {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 10px;
+        background-color: #f0f7ff;
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 4px;
+    }
+    
+    /* Nút hành động */
+    .item-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+    }
+    
+    .action-btn {
+        padding: 10px 15px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .action-btn i {
+        font-size: 0.9rem;
+    }
+    
+    .btn-served {
+        background-color: var(--color-success);
+        border-color: var(--color-success);
+        color: white;
+    }
+    
+    .btn-reset {
+        background-color: white;
+        border: 1px solid var(--color-warning);
+        color: var(--color-warning);
+    }
+    
+    .btn-reset:hover {
+        background-color: var(--color-warning);
+        color: white;
+    }
+    
+    .no-items-message {
+        text-align: center;
+        padding: 40px;
+        background-color: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        color: #666;
+    }
+    
+    /* Responsive - Điều chỉnh cho màn hình nhỏ */
+    @media (max-width: 768px) {
+        .page-container {
+            padding: 15px;
+            margin: 15px;
+        }
+        
+        .summary-row {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .card-body .row {
+            flex-direction: column;
+        }
+        
+        .item-actions {
+            margin-top: 15px;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .action-btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container page-container">
+    <div class="page-header">
+        <h1 class="page-title">Chi tiết đơn hàng - Bàn {{ table_number }}</h1>
+        <a href="{{ url_for('tables.table_status') }}" class="btn back-btn btn-outline-primary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách bàn
+        </a>
+    </div>
+    
+    <div class="order-summary">
+        <h3 class="summary-title">Thông tin đơn hàng</h3>
+        <div class="summary-row">
+            <div class="summary-item">
+                <div class="summary-label">Mã đơn hàng</div>
+                <div class="summary-value">#{{ order.id }}</div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">Trạng thái</div>
+                <div class="summary-value">
+                    <span class="badge status-badge {% if order.status == 'pending' %}bg-warning{% elif order.status == 'processing' %}bg-info{% elif order.status == 'completed' %}bg-success{% else %}bg-danger{% endif %}">
+                        {% if order.status == 'pending' %}Chờ phục vụ
+                        {% elif order.status == 'processing' %}Đang phục vụ
+                        {% elif order.status == 'completed' %}Hoàn thành
+                        {% else %}Đã hủy
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">Thời gian đặt</div>
+                <div class="summary-value">{{ order.order_time.strftime('%H:%M:%S %d/%m/%Y') }}</div>
+            </div>
+        </div>
+        
+        <div class="summary-row">
+            <div class="summary-item">
+                <div class="summary-label">Thời gian đã qua</div>
+                <div class="summary-value">
+                    <span class="timer {% if (now - order.order_time).total_seconds() / 60 > 30 %}timer-urgent{% endif %}">
+                        {{ ((now - order.order_time).total_seconds() / 60) | int }} phút
+                    </span>
+                </div>
+            </div>
+            
+            <div class="summary-item">
+                <div class="summary-label">Tiến độ phục vụ</div>
+                <div class="summary-value">
+                    {{ items|selectattr('is_served', 'equalto', true)|list|length }}/{{ items|length }} món
+                    
+                    <div class="progress mt-2" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ (items|selectattr('is_served', 'equalto', true)|list|length / items|length) * 100 if items|length > 0 else 0 }}%" 
+                             aria-valuenow="{{ items|selectattr('is_served', 'equalto', true)|list|length }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="{{ items|length }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="items-container">
+        {% if items|length > 0 %}
+            {% for item in items %}
+            <div class="item-card {% if item.is_served %}item-served{% else %}item-pending{% endif %}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="item-name">{{ item.name }}</h4>
+                            <div class="item-quantity">
+                                <i class="fas fa-cubes me-2"></i> Số lượng: {{ item.quantity }}
+                            </div>
+                            
+                            {% if item.is_served %}
+                            <div class="served-time">
+                                <i class="fas fa-check-circle me-1"></i> Đã phục vụ lúc: {{ item.served_at.strftime('%H:%M:%S %d/%m/%Y') }}
+                            </div>
+                            {% endif %}
+                            
+                            {% if item.note %}
+                            <div class="item-note">
+                                <i class="fas fa-sticky-note me-2"></i> {{ item.note }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="item-actions">
+                                {% if not item.is_served %}
+                                <form method="POST" action="{{ url_for('tables.update_served_status', item_id=item.id) }}" class="w-100">
+                                    <button type="submit" class="btn action-btn btn-served w-100">
+                                        <i class="fas fa-check"></i> Đánh dấu đã phục vụ
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form method="POST" action="{{ url_for('tables.update_served_status', item_id=item.id) }}" class="w-100">
+                                    <input type="hidden" name="reset_served" value="true">
+                                    <button type="submit" class="btn action-btn btn-reset w-100">
+                                        <i class="fas fa-undo"></i> Đặt lại
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-items-message">
+                <i class="fas fa-utensils fa-3x mb-3"></i>
+                <h4>Không có món nào trong đơn hàng</h4>
+                <p>Vui lòng thêm món vào đơn hàng</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

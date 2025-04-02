@@ -7,10 +7,9 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_time = db.Column(db.DateTime, default=datetime.now)
     waiter_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    status = db.Column(db.String(50), nullable=False)  # pending, in_progress, completed, canceled
+    status = db.Column(db.String(50), nullable=False)  
     total_amount = db.Column(db.Float, default=0.0)
-    
-    # Quan hệ với order items
+    table = db.Column(db.Float, nullable=True)
     order_items = db.relationship("OrderItem", backref="order", lazy=True)
 
     def __repr__(self):

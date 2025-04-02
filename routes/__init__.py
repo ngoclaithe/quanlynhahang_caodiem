@@ -8,6 +8,7 @@ from routes.main import main_bp
 from routes.statistical import statistical_bp
 from routes.manage_user import manage_user_bp
 from routes.payment import payment_bp
+from routes.table import tables_bp
 def register_routes(app):
     app.register_blueprint(auth_bp)
     app.register_blueprint(orders_bp)
@@ -19,3 +20,4 @@ def register_routes(app):
     app.register_blueprint(statistical_bp)
     app.register_blueprint(manage_user_bp)
     app.register_blueprint(payment_bp)
+    app.register_blueprint(tables_bp)

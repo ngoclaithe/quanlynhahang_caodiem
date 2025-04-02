@@ -13,7 +13,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/statistical.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_user.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/payment.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
     {% block head %}{% endblock %}
+    {% block styles %}{% endblock %}
 </head>
 <body>
     {% if not session.user_id %}
@@ -31,6 +33,7 @@
                     {% if session.role == 'admin' %}
                       <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
                       <li><a href="{{ url_for('orders.list_orders') }}">Đơn hàng</a></li>
+                      <li><a href="{{ url_for('tables.table_status') }}">Bàn</a></li>
                       <li><a href="{{ url_for('payment.list_payments') }}">Thanh toán</a></li>
                       <li><a href="{{ url_for('menu.list_menu') }}">Thực đơn</a></li>
                       <li><a href="{{ url_for('ingredient.list_ingredients') }}">Nguyên liệu</a></li>
@@ -55,7 +58,6 @@
                       <li><a href="{{ url_for('warehouse.list_ingredients') }}">Kho</a></li>
                       <li><a href="{{ url_for('attendance.list_attendance') }}">Chấm công</a></li>
                     {% endif %}
-                    <li><a href="{{ url_for('main.home') }}">Trang chủ</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Đăng xuất</a></li>
                 </ul>
             </nav>

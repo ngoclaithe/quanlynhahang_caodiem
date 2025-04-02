@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+{% block title %}Trạng thái bàn{% endblock %}
+{% block content %}
+<div class="container dashboard-container">
+    
+    <div class="row" id="tables-container">
+        {% for table_num, status in table_status.items() %}
+        <div class="col-md-6 col-lg-4 table-card-wrapper">
+            <div class="table-card {% if not status.has_order %}table-free{% elif status.status == 'processing' %}table-in-progress{% else %}table-occupied{% endif %}" id="table-{{ table_num }}">
+                <div class="table-header">
+                    <h3>Bàn {{ table_num }}</h3>
+                    <span class="badge {% if not status.has_order %}bg-success{% elif status.status == 'processing' %}bg-warning{% else %}bg-danger{% endif %}">
+                        {% if not status.has_order %}Trống{% elif status.status == 'processing' %}Đang phục vụ{% else %}Chờ phục vụ{% endif %}
+                    </span>
+                </div>
+                <div class="table-content">
+                    {% if status.has_order %}
+                    <div class="timer-section">
+                        <p>Thời gian đã gọi: 
+                            <span class="timer {% if status.time_elapsed > 30 %}timer-urgent{% endif %}">
+                                {{ status.time_elapsed }} phút
+                            </span>
+                        </p>
+                    </div>
+                    <div class="progress-section">
+                        <p>Tiến độ phục vụ: {{ status.served_items }}/{{ status.total_items }} món</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ (status.served_items / status.total_items) * 100 if status.total_items > 0 else 0 }}%" 
+                                 aria-valuenow="{{ status.served_items }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="{{ status.total_items }}">
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('tables.table_order_details', table_number=table_num) }}" class="btn btn-primary action-btn">
+                        Chi tiết đơn hàng
+                    </a>
+                    {% else %}
+                    <p class="empty-table-message">Bàn này hiện đang trống</p>
+                    <a href="{{ url_for('orders.create_order') }}?table={{ table_num }}" class="btn btn-success action-btn">
+                        Tạo đơn hàng mới
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<button class="btn refresh-btn shadow" id="floatingRefresh">
+    <i class="fas fa-sync-alt"></i>
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function updateTableStatus() {
+        fetch('{{ url_for("tables.api_table_status") }}')
+        .then(response => response.json())
+        .then(data => {
+            for (const [tableNum, status] of Object.entries(data)) {
+                const tableCard = document.getElementById(`table-${tableNum}`);
+                
+                tableCard.className = 'table-card';
+                if (!status.has_order) {
+                    tableCard.classList.add('table-free');
+                } else if (status.status === 'processing') {
+                    tableCard.classList.add('table-in-progress');
+                } else {
+                    tableCard.classList.add('table-occupied');
+                }
+                
+                let content = `
+                    <div class="table-header">
+                        <h3>Bàn ${tableNum}</h3>
+                        <span class="badge ${!status.has_order ? 'bg-success' : (status.status === 'processing' ? 'bg-warning' : 'bg-danger')}">
+                            ${!status.has_order ? 'Trống' : (status.status === 'processing' ? 'Đang phục vụ' : 'Chờ phục vụ')}
+                        </span>
+                    </div>
+                    <div class="table-content">
+                `;
+                
+                if (status.has_order) {
+                    const isUrgent = status.time_elapsed > 30;
+                    content += `
+                        <div class="timer-section">
+                            <p>Thời gian đã gọi: 
+                                <span class="timer ${isUrgent ? 'timer-urgent' : ''}">
+                                    ${status.time_elapsed} phút
+                                </span>
+                            </p>
+                        </div>
+                        <div class="progress-section">
+                            <p>Tiến độ phục vụ: ${status.served_items}/${status.total_items} món</p>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: ${(status.served_items / status.total_items) * 100}%" 
+                                     aria-valuenow="${status.served_items}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="${status.total_items}">
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/tables/order/${tableNum}" class="btn btn-primary action-btn">
+                            Chi tiết đơn hàng
+                        </a>
+                    `;
+                } else {
+                    content += `
+                        <p class="empty-table-message">Bàn này hiện đang trống</p>
+                        <a href="/orders/create?table=${tableNum}" class="btn btn-success action-btn">
+                            Tạo đơn hàng mới
+                        </a>
+                    `;
+                }
+                
+                content += `</div>`;
+                tableCard.innerHTML = content;
+            }
+            
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = `Cập nhật lần cuối: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        })
+        .catch(error => console.error('Lỗi khi cập nhật trạng thái bàn:', error));
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('manualRefresh').addEventListener('click', updateTableStatus);
+        document.getElementById('floatingRefresh').addEventListener('click', updateTableStatus);
+        
+        let refreshInterval;
+        
+        function startAutoRefresh() {
+            refreshInterval = setInterval(updateTableStatus, 30000);
+        }
+        
+        function stopAutoRefresh() {
+            clearInterval(refreshInterval);
+        }
+        
+        const autoRefreshToggle = document.getElementById('autoRefreshToggle');
+        autoRefreshToggle.addEventListener('change', function() {
+            if (this.checked) {
+                startAutoRefresh();
+            } else {
+                stopAutoRefresh();
+            }
+        });
+        
+        if (autoRefreshToggle.checked) {
+            startAutoRefresh();
+        }
+    });
+</script>
+{% endblock %}

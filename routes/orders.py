@@ -16,14 +16,16 @@ def list_orders():
 def create_order():
     if request.method == 'POST':
         waiter_id = session.get('user_id')
+        table = request.form.get('table_number')
         status = 'pending'
         total_amount = float(request.form.get('total_amount', 0.0))
         
         order = Order(
             waiter_id=waiter_id, 
             status=status, 
+            table=table,
             total_amount=total_amount, 
-            order_time=datetime.utcnow()
+            order_time=datetime.now()
         )
         db.session.add(order)
         db.session.flush()  
@@ -62,7 +64,7 @@ def update_order_status(order_id):
     order = Order.query.get_or_404(order_id)
     if request.method == 'POST':
         new_status = request.form.get('status')
-        if new_status not in ['pending', 'in_progress', 'completed', 'cancelled']:
+        if new_status not in ['pending', 'processing', 'completed', 'cancelled']:
             flash('Trạng thái không hợp lệ', 'error')
             return redirect(url_for('orders.update_order_status', order_id=order_id))
         order.status = new_status

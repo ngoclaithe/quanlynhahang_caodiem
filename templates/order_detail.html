@@ -6,6 +6,7 @@
     <h2 class="page-title" style="margin-bottom: 20px;">Chi tiết Đơn hàng #{{ order.id }}</h2>
     
     <div class="order-info" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <p><strong>Bàn:</strong> {{ order.table}}</p>
         <p><strong>Thời gian đặt:</strong> {{ order.order_time.strftime('%d/%m/%Y %H:%M') }}</p>
         <p>
             <strong>Nhân viên:</strong> 
@@ -32,6 +33,7 @@
                 <th style="padding: 10px 15px; text-align: left;">Món ăn</th>
                 <th style="padding: 10px 15px; text-align: left;">Số lượng</th>
                 <th style="padding: 10px 15px; text-align: left;">Ghi chú</th>
+                <th style="padding: 10px 15px; text-align: left;">Giờ gọi</th>
             </tr>
         </thead>
         <tbody>
@@ -40,6 +42,7 @@
                 <td style="padding: 10px 15px;">{{ item.menu_item.name }}</td>
                 <td style="padding: 10px 15px;">{{ item.quantity }}</td>
                 <td style="padding: 10px 15px;">{{ item.note }}</td>
+                <td style="padding: 10px 15px;">{{ item.created_at}}</td>
             </tr>
             {% endfor %}
         </tbody>

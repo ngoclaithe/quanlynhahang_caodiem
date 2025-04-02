@@ -117,3 +117,30 @@
     font-weight: 600;
     color: #2c3e50;
 }
+.table-selection {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.table-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.table-select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.table-select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}

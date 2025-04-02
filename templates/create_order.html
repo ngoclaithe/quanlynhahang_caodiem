@@ -8,9 +8,20 @@
     <form method="POST" action="{{ url_for('orders.create_order') }}">
         <div class="order-form-container">
             <!-- Phần tìm kiếm món -->
+
             <div class="menu-section">
                 <h3 class="section-title">Menu</h3>
-                
+                <div class="table-selection">
+                    <label for="table-select">Chọn Bàn:</label>
+                    <select name="table_number" id="table-select" required>
+                        <option value="" disabled selected>Chọn bàn...</option>
+                        <option value="1">Bàn 1</option>
+                        <option value="2">Bàn 2</option>
+                        <option value="3">Bàn 3</option>
+                        <option value="4">Bàn 4</option>
+                        <option value="5">Bàn 5</option>
+                    </select>
+                </div>
                 <div class="search-box">
                     <input type="text" id="search-menu" class="search-input" placeholder="Tìm kiếm món...">
                     <button type="button" class="search-btn">Tìm</button>
